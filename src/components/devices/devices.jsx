@@ -9,6 +9,7 @@ function Devices(props){
   useEffect(() => {
     getDevices().then( (e) => {
         setIsLoaded(true);
+        console.log(e.map(e=> e).concat(""));
         setDevices(e);       
     })
 
@@ -17,12 +18,12 @@ function Devices(props){
     if(isLoaded){
         return (<Stack gap={2} className="col-md-5 mx-auto"> 
           {devices.map(dev => (
-            <Details key={dev.address} address={dev.address} name={dev.name}/>
-          ))};
+            <Details key={dev.address} address={dev.address} name={dev.name} strips={dev.stripDef}/>
+          ))}
         </Stack>
-        );
+        )
     }else{
-        return <div>...</div>;
+        return <div>...</div>
     }
 }
 

@@ -16,9 +16,10 @@ export async function getDeviceById(id){
 export async function updateDeviceById(id, stripDef){
     let newDevice = JSON.stringify({
         address : id,
-        stripDef :stripDef,
+        stripDef : stripDef.strips,
         strips : serializeStrips(stripDef)
     });
+    console.log(newDevice);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,12 +29,12 @@ export async function updateDeviceById(id, stripDef){
 }
 
 const Cycle = 0;
-const Rainbow = 1;
+const Cycle_NoBounce = 1;
+const Rainbow = 2;
 
 function serializeStrips(stripDef){
     let currBuffer = 1;
-    console.log(stripDef.brightness);
-    let bufferList = {"1520" : Buffer.from(stripDef.brightness)};
+    let bufferList = {"1520" : Buffer.from([Number(stripDef.brightness)])};
     let prefix = '152';
     for(var strip of stripDef.strips){
         let length = strip.Length;
@@ -41,8 +42,9 @@ function serializeStrips(stripDef){
         let color = strip.Color;
         let upper = strip.Upper;
         let lower = strip.Lower;
-        let speed = strip.speed;
-        console.log(stripType);
+        let speed = strip.Speed;
+        let cycleShift = strip.CycleShift;
+        let rainbowStretch = strip.RainbowStretch;
         let buff = `${prefix}${currBuffer}`;
         switch(stripType){
             case "Solid" :
@@ -59,14 +61,20 @@ function serializeStrips(stripDef){
             default :
                 let ty = Cycle;
                 let otherParam = 0;
-                if(stripType === "Cycle"){ ty = Cycle; }
-                if(stripType === "Rainbow"){ ty = Rainbow; }
+                if(stripType === "Cycle"){ 
+                    ty = Cycle;
+                    otherParam = cycleShift;
+                }
+                if(stripType === "Rainbow"){ 
+                    ty = Rainbow;
+                    otherParam = rainbowStretch;
+                }
 
                 length = length % 2 !== 0 ? length : length -1;
                 speed = Math.min(Math.max(speed, 0),31);
                 speed = speed << 3;
 
-                let bounds = (lower << 4) + upper;
+                let bounds = (lower << 4) + (upper << 0);
                 let type_speed = ty + speed; 
                 while(length > 255){
                     length -= 255;
@@ -74,11 +82,16 @@ function serializeStrips(stripDef){
                     bufferList[buff] = Buffer.from([255, type_speed, otherParam, bounds]);
                     currBuffer += 1;
                 }
-                buff = `${prefix}${currBuffer}`;
                 console.log(`Bounds ${bounds}`);
+                buff = `${prefix}${currBuffer}`;
                 bufferList[buff] = Buffer.from([length, type_speed, otherParam, bounds]);
                 currBuffer += 1;
         }
+    }
+    while(currBuffer <= 5){
+        let buff = `${prefix}${currBuffer}`;
+        bufferList[buff] = Buffer.from([0,0,0,0])
+        currBuffer += 1;
     }
     return bufferList;
 }

@@ -10,17 +10,20 @@ function Details(props){
     const [device, setDevice] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [toggle, setToggle] = useState(false);
-    const [strips, setStrips] = useState([]);
+    const [strips, setStrips] = useState(props.strips ?? []);
     const [validated, setValidated] = useState(false);
-    const [brightness, setBrightness ] = useState(1);
+    const [brightness, setBrightness ] = useState(0);
+    const [debug, setDebug ] = useState(false);
 
     function addStrip(){
-        let toAdd = {   Length : 16,
-                        Upper : 16,
+        let toAdd = {   Length : 32,
+                        Upper : 15,
                         Lower : 0,
-                        Speed : 0,
-                        Color : "#ffffff",
-                        StripType : "Solid",
+                        Speed : 8,
+                        Color : "#ff00ff",
+                        StripType : "Rainbow",
+                        CycleShift : 0,
+                        RainbowStretch : 1,
                         index:strips.length
                     };
         setStrips(strips.concat(toAdd));
@@ -33,15 +36,13 @@ function Details(props){
         getDeviceById(address).then( (e) => {
             setIsLoaded(true);
             setDevice(e);
-            console.log(e.strips);
-            //setBrightness(e.strips["1520"].data);
+            setBrightness(e.strips["1520"].data);
         });
     }, []);
     const handleChange = (index, property, value) => {
         const newStrips = [...strips];
         newStrips[index][property] = value;
         setStrips(newStrips);
-        console.log(strips);
     }
 
 
@@ -54,7 +55,6 @@ function Details(props){
             }
             event.preventDefault();
             event.stopPropagation()
-            console.log(strips);
             let res = await updateDeviceById(address, {brightness : brightness, strips : strips });
 
     }
@@ -64,6 +64,7 @@ function Details(props){
             <Button onClick={() => setToggle(!toggle)}>{name}</Button>
             {toggle && 
             <div>
+                {debug &&
                 <Card>
                     <Card.Body>
                         Brightness : { device.strips["1520"].data.join("\t") }
@@ -78,29 +79,28 @@ function Details(props){
                         <br/>
                         Buffer 5 : {device.strips["1525"].data.join("\t") }
                     </Card.Body>
-                </Card>
-                <Form className='bg-light' validated={validated} onSubmit={handleSubmit}>
+                </Card>}
+                <Form className='bg-dark text-light p-3' validated={validated} onSubmit={handleSubmit}>
                     <Form.Group>
                         <Form.Label>Brightness :</Form.Label>
                         <RangeSlider value={brightness} onChange={e => setBrightness(e.target.value)} min={1} max={255}/>
                     </Form.Group>
                     {strips.map((strip, i) => 
                         <div key={i.toString()}>
-                            <Strip indx={i} strip={strip}
-                                handleChange={handleChange}
-                                />
-                            <Button variant='danger' onClick={e => deleteStrip(strip.index)}>X</Button>
+                            <Strip indx={i} strip={strip} handleChange={handleChange}>
+                                <Button variant='danger' onClick={e => deleteStrip(strip.index)}>X</Button>
+                            </Strip>
                         </div>
                     )}
-                    <Button onClick={e => addStrip()}>+</Button>
-                    <Button type="submit">Set Strip</Button>
+                    <Button className='m-3' onClick={e => addStrip()}>+</Button>
+                    <Button className='m-3' type="submit">Set Strip</Button>
                 </Form>
             </div>
             }
             </Stack>
-        );
+        )
     }else{
-        return <Button>{name}</Button>;
+        return <Button>{name}</Button>
     }
 }
 
