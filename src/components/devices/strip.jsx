@@ -4,62 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useStrip } from '../../lib/useStrip';
 import RangeSlider from 'react-bootstrap-range-slider';
 import ColorRange from './colorRange';
-import {deserializeStrip} from "../../services/DeviceService"
 
 function Strip(props){
-    const [length, setLength] = useState(props.strip.Length);
-    const [stripType, setStripType] = useState(props.strip.StripType);
-    const [cycleShift, setCycleShift] = useState(props.strip.CycleShift);
-    const [rainbowStretch, setRainbowStretch] = useState(props.strip.RainbowStretch);
-    const [color, setColor] = useState(props.strip.Color);
-    const [speed, setSpeed] = useState(props.strip.Speed);
-    const [upper, setUpper] = useState(props.strip.Upper);
-    const [lower, setLower] = useState(props.strip.Lower);
-    const [name, setName] = useState(props.strip.name);
     const [strip, {loading, mutate}] = useStrip({id : props.strip.id});
 
     const labelSize = 3;
     const sliderSize = 9;
 
-    const onInputChange = (e) =>{
-        switch(e.target.name){
-            case "Name" :
-                setName(e.target.value);
-                break;
-            case "Length" :
-                setLength(e.target.value);
-                break;
-            case "StripType" :
-                setStripType(e.target.value);
-                break;
-            case "Color" :
-                setColor(e.target.value);
-                break;
-            case "Speed" :
-                setSpeed(e.target.value);
-                break;
-            case "Upper" :
-                setUpper(e.target.value);
-                break;
-            case "CycleShift" :
-                setCycleShift(e.target.value);
-                break;
-            case "RainbowStretch" :
-                setRainbowStretch(e.target.value);
-                break;
-            case "Lower" :
-                setLower(e.target.value);
-                break;
-            default :
-                break;
-        }
-
-        props.handleChange(props.indx, e.target.name, e.target.value);
-    }
-
-    useEffect(() => {
-
-    }, [])
     return (
         !loading &&
         <div className='border p-4 m-1' key={props.indx}>
