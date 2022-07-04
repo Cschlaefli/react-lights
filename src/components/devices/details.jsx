@@ -1,49 +1,38 @@
 import { Stack, Button, Card, Form, FloatingLabel, Range } from 'react-bootstrap';
-import { getDeviceById, updateDeviceById } from '../../services/DeviceService';
+import { deleteDeviceStrip, addDeviceStrip, updateDeviceById, updateStripById } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Strip from './strip';
+import { useDevice } from '../../lib/useDevice';
+import { useDeviceStrips } from '../../lib/useDeviceStrips';
 
 function Details(props){
-    const address = props.address;
-    const name = props.name;
-    const [device, setDevice] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [device, {loading, mutate}] = useDevice({id : props.address})
+    //const [device, setDevice] = useState(null);
     const [toggle, setToggle] = useState(false);
-    const [strips, setStrips] = useState(props.strips ?? []);
+    //const [strips, setStrips] = useState(props.strips ?? []);
+    const [strips, {loading : stripsLoading, mutate : stripsMutate}] = useDeviceStrips({device_address :props.address});
     const [validated, setValidated] = useState(false);
-    const [brightness, setBrightness ] = useState(0);
-    const [debug, setDebug ] = useState(false);
+    const [name, setName ] = useState(props.name);
+    const [debug, setDebug ] = useState(true);
 
-    function addStrip(){
-        let toAdd = {   Length : 32,
-                        Upper : 15,
-                        Lower : 0,
-                        Speed : 8,
-                        Color : "#ff00ff",
-                        StripType : "Rainbow",
-                        CycleShift : 0,
-                        RainbowStretch : 1,
-                        index:strips.length
-                    };
-        setStrips(strips.concat(toAdd));
+    async function addStrip(id){
+        let toAdd = {device_address : props.address, strip_order : strips.length+1, strip_id : id};
+        if(!id){
+            let newId = await updateStripById({name : "New", bytes : 0, });
+            toAdd.strip_id = newId.id;
+        }
+        await addDeviceStrip(toAdd);
+        stripsMutate();
     }
-    function deleteStrip(i){
-        setStrips(strips.filter(function(s) { return s.index !== i }));
+    async function deleteStrip(strip){
+        let delstrip = {strip_order : strip.strip_order, device_address : strip.device_address, strip_id : strip.strip_id}
+        await deleteDeviceStrip(delstrip);
+        stripsMutate();
     }
 
     useEffect(() => {
-        getDeviceById(address).then( (e) => {
-            setIsLoaded(true);
-            setDevice(e);
-            setBrightness(e.strips["1520"].data);
-        });
     }, []);
-    const handleChange = (index, property, value) => {
-        const newStrips = [...strips];
-        newStrips[index][property] = value;
-        setStrips(newStrips);
-    }
 
 
 
@@ -54,46 +43,46 @@ function Details(props){
                 event.stopPropagation();
             }
             event.preventDefault();
-            event.stopPropagation()
-            let res = await updateDeviceById(address, {brightness : brightness, strips : strips });
-
+            event.stopPropagation();
+            //let res = await updateDeviceById(device);
+            //setDevice(res);
     }
 
-    if(isLoaded){
+    if(!loading){
         return (<Stack gap={1}>
-            <Button onClick={() => setToggle(!toggle)}>{name}</Button>
+            <Button onClick={() => setToggle(!toggle)}>{device.name}</Button>
             {toggle && 
             <div>
-                {debug &&
-                <Card>
-                    <Card.Body>
-                        Brightness : { device.strips["1520"].data.join("\t") }
-                        <br/>
-                        Buffer 1 : {device.strips["1521"].data.join("\t") }
-                        <br/>
-                        Buffer 2 : {device.strips["1522"].data.join("\t") }
-                        <br/>
-                        Buffer 3 : {device.strips["1523"].data.join("\t") }
-                        <br/>
-                        Buffer 4 : {device.strips["1524"].data.join("\t") }
-                        <br/>
-                        Buffer 5 : {device.strips["1525"].data.join("\t") }
-                    </Card.Body>
-                </Card>}
                 <Form className='bg-dark text-light p-3' validated={validated} onSubmit={handleSubmit}>
-                    <Form.Group>
-                        <Form.Label>Brightness :</Form.Label>
-                        <RangeSlider value={brightness} onChange={e => setBrightness(e.target.value)} min={1} max={255}/>
+                    <Form.Group controlId='n'>
+                        <Form.FloatingLabel label='Name'>
+                            <Form.Control className='bg-dark text-light my-2' value={device.name} onChange={async (e) =>{
+                                const newDev = {...device, name : e.target.value};
+                                await updateDeviceById(newDev);
+                                mutate(newDev);
+                            } }/>
+                        </Form.FloatingLabel>
                     </Form.Group>
-                    {strips.map((strip, i) => 
+                    <Form.Group controlId='b'>
+                        <Form.Label>Brightness :</Form.Label>
+                        <RangeSlider value={device.brightness}
+                            onChange={(e)=> mutate({...device, brightness : e.target.value}, false)}
+                            onAfterChange={async (e) => {
+                                const newDev = {...device, brightness : e.target.value};
+                                await updateDeviceById(newDev);
+                                mutate(newDev);
+                            }
+                            } min={1} max={255}/>
+                    </Form.Group>
+                    {!stripsLoading && strips && strips?.map((strip, i) => 
                         <div key={i.toString()}>
-                            <Strip indx={i} strip={strip} handleChange={handleChange}>
-                                <Button variant='danger' onClick={e => deleteStrip(strip.index)}>X</Button>
+                            <Strip indx={i} strip={strip.strip}>
+                                <Button variant='danger' onClick={e => deleteStrip(strip)}>X</Button>
                             </Strip>
+                            <Button className='m-3' onClick={e => addStrip(strip.strip.id)}>Duplicate</Button>
                         </div>
                     )}
-                    <Button className='m-3' onClick={e => addStrip()}>+</Button>
-                    <Button className='m-3' type="submit">Set Strip</Button>
+                    <Button className='m-3' onClick={e => addStrip()}>New Strip</Button>
                 </Form>
             </div>
             }
