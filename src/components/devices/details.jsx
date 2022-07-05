@@ -1,5 +1,5 @@
 import { Stack, Button, Card, Form, FloatingLabel, Range } from 'react-bootstrap';
-import { deleteDeviceStrip, addDeviceStrip, updateDeviceById, updateStripById } from '../../services/DeviceService';
+import { deleteDeviceStrip, addDeviceStrip, updateDeviceById, updateStripById, updateOrCreateConfigById, updateOrCreateConfigStripById } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Strip from './strip';
@@ -8,9 +8,7 @@ import { useDeviceStrips } from '../../lib/useDeviceStrips';
 
 function Details(props){
     const [device, {loading, mutate}] = useDevice({id : props.address})
-    //const [device, setDevice] = useState(null);
     const [toggle, setToggle] = useState(false);
-    //const [strips, setStrips] = useState(props.strips ?? []);
     const [strips, {loading : stripsLoading, mutate : stripsMutate}] = useDeviceStrips({device_address :props.address});
     const [validated, setValidated] = useState(false);
     const [name, setName ] = useState(props.name);
@@ -29,6 +27,14 @@ function Details(props){
         let delstrip = {strip_order : strip.strip_order, device_address : strip.device_address, strip_id : strip.strip_id}
         await deleteDeviceStrip(delstrip);
         stripsMutate();
+    }
+
+    async function createConfig(strip){
+        let config = {name : strip.name, brightness : strip.brightness};
+        config = await updateOrCreateConfigById(config);
+        strips.forEach(async (e)=> {
+            let cs = await updateOrCreateConfigStripById({strip_id : e.strip_id, config_id : config.id, strip_order : e.strip_order});
+        });
     }
 
     useEffect(() => {
@@ -62,6 +68,7 @@ function Details(props){
                                 mutate(newDev);
                             } }/>
                         </Form.FloatingLabel>
+                        <Button onClick={() => createConfig(device)}>Create Config</Button>
                     </Form.Group>
                     <Form.Group controlId='b'>
                         <Form.Label>Brightness :</Form.Label>

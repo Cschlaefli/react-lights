@@ -50,6 +50,23 @@ export async function updateStripById(strip){
     };
     return await (await fetch(`${baseUrl}/strips`, requestOptions)).json();
 }
+export async function updateOrCreateConfigStripById(configStrip){
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(configStrip)
+    };
+    return await (await fetch(`${baseUrl}/config_strips`, requestOptions)).json();
+}
+
+export async function updateOrCreateConfigById(config){
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+    };
+    return await (await fetch(`${baseUrl}/config`, requestOptions)).json();
+}
 
 const Cycle = 0;
 const Cycle_NoBounce = 1;
