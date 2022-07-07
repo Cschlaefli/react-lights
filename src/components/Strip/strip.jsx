@@ -28,7 +28,7 @@ function Strip(props){
         !loading &&
         <div className='border p-4 m-1' key={props.indx}>
             <Form.Group as={Row} controlId={props.indx + "actions"}>
-                <Col xs={4}>
+                <Col md={3} xs={6}>
                     <Form.FloatingLabel label='Name'>
                         <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
                         onChange={async e => {
@@ -38,7 +38,7 @@ function Strip(props){
                         }}/>
                     </Form.FloatingLabel>
                 </Col>
-                <Col xs={4}>
+                <Col md={3} xs={6}>
                 <Form.FloatingLabel label='Strip Type'>
                     <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
                         const newStrip = {...strip, stripType : e.target.value};
@@ -51,16 +51,10 @@ function Strip(props){
                     </Form.Select>
                 </Form.FloatingLabel>
                 </Col>
-                <Col xs={4}>
-                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
-                    {props.children}
-                </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId={props.indx + "stripLength"}>
-                <Col xs={3}>
+                <Col xs={6}>
                     <Form.Label>Length :</Form.Label>
                 </Col>
-                <Col xs={7}>
+                <Col xs={4}>
                     <RangeSlider name="Length" value={strip.length} 
                         onChange={(e)=> {
                             const newStrip =  serializeStrip({...strip, length : e.target.value});
@@ -81,6 +75,18 @@ function Strip(props){
                         mutate(retStrip);
                     }}/>
                 </Col>
+                <Col md={2}xs={6}>
+                    <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Duplicate</Button>
+                </Col>
+                <Col md={2} xs={6}>
+                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
+                </Col>
+                <Col md={1}xs={6}>
+                    <Button className='m-3' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row} controlId={props.indx + "stripLength"}>
+
             </Form.Group>
             {strip.stripType === "Solid" && 
             <Form.Group controlId={props.indx + "stripColor"}>
@@ -186,7 +192,7 @@ function Strip(props){
             return (
                 <div className='border p-4 m-1'>
                     <Form.Group as={Row} controlId={props.indx + "actions"}>
-                        <Col md={3} xs={6}>
+                        <Col md={2} xs={6}>
                             {!loading &&
                                 <Form.FloatingLabel label='Name'>
                                     <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
@@ -203,7 +209,7 @@ function Strip(props){
                                 </Form.FloatingLabel>
                             }
                         </Col>
-                        <Col md={3} xs={6}>
+                        <Col md={2} xs={6}>
                             {!loading &&
                                 <Form.FloatingLabel label='Strip Type'>
                                     <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
@@ -227,16 +233,18 @@ function Strip(props){
                                 </Form.FloatingLabel>
                             }
                         </Col>
-                        <Col md={2} xs={6}>
-                            <Button className="m-3" onClick={_=> setToggle(!toggle)}> Show details </Button>
+                        <Col md={4} xs={6}>
+
                         </Col>
-                        <Col md={2}xs={6}>
-                            <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Duplicate</Button>
+                        <Col md={1}xs={6}>
+                            <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Dupe</Button>
                         </Col>
                         <Col md={1}xs={6}>
                             <Button className='m-3' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
                         </Col>
-                    {props.children}
+                        <Col md={2} xs={6}>
+                            <Button className="m-3" onClick={_=> setToggle(!toggle)}> Show details </Button>
+                        </Col>
                     </Form.Group>
                 </div>
             )

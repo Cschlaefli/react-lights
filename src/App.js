@@ -8,8 +8,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 function App() {
   return (
     <BrowserRouter>
+    <Container fluid className="App">
     <div className="App">
-    <Container>
           <Navbar sticky='top' expand='lg' style={{width:"100%"}} bg='dark' variant='dark'>
             <Container>
               <NavbarBrand>Home</NavbarBrand>
@@ -43,8 +43,8 @@ function App() {
             <Route path="/config" element={<Configs/>} />
           </Routes>
       </div>
-    </Container>
     </div>
+    </Container>
     </BrowserRouter>
   );
 }

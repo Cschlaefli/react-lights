@@ -1,4 +1,4 @@
-import { Stack, Button, Form, Col, Row } from 'react-bootstrap';
+import { Stack, Button, CloseButton, Form, Col, Row } from 'react-bootstrap';
 import { updateStripById, updateOrCreateConfigById, addConfigStrip, deleteConfigStrip } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
 import RangeSlider from 'react-bootstrap-range-slider';
@@ -33,6 +33,9 @@ function Config(props){
         await deleteConfigStrip(delstrip);
         stripsMutate();
     }
+    async function deleteConfig(config){
+
+    }
 
     const handleSubmit = async (event) => {
         const form = event.currentTarget;
@@ -45,8 +48,12 @@ function Config(props){
     }
 
     if(!loading){
-        return (<Stack gap={1}>
-            <Button onClick={() => setToggle(!toggle)}>{config.name}</Button>
+        return (<Stack gap={1} className="bg-dark p-3">
+            <Row className="m-3">
+                <Button className="col-4" onClick={() => setToggle(!toggle)}>{config.name}</Button> 
+                <div className='col'></div>
+                <Button className="col-1" align="end" variant="danger" onClick={() => deleteConfig(config)}>Delete</Button>
+            </Row>
             {toggle && 
             <div>
                 <Form className='bg-dark text-light p-3' onSubmit={handleSubmit}>

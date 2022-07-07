@@ -1,7 +1,8 @@
-import { Stack, Button,  Form, Col, Row } from 'react-bootstrap';
+import { Stack, CloseButton, Button,  Form, Col, Row } from 'react-bootstrap';
 import { deleteDeviceStrip, addDeviceStrip, updateDeviceById, updateStripById, updateOrCreateConfigById, addConfigStrip } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
-import RangeSlider from 'react-bootstrap-range-slider';
+//import RangeSlider from 'react-bootstrap-range-slider';
+import RangeSlider from '../rangeSlider/index';
 import Strip from '../Strip/strip';
 import { useDevice } from '../../lib/useDevice';
 import { useDeviceStrips } from '../../lib/useDeviceStrips';
@@ -54,13 +55,18 @@ function Device(props){
     }
 
     if(!loading){
-        return (<Stack gap={1}>
-            <Button onClick={() => setToggle(!toggle)}>{device.name}</Button>
+        return (<Stack gap={1} className='bg-dark p-3'>
+            {!toggle &&
+            <Row className="m-3">
+                <Button className="col-4" onClick={() => setToggle(!toggle)}>{device.name}</Button> 
+                <div className='col'></div>
+            </Row>
+            }
             {toggle && 
             <div>
                 <Form className='bg-dark text-light p-3' onSubmit={handleSubmit}>
                     <Form.Group as={Row} controlId='n'>
-                        <Col xs={10}>
+                        <Col xs={4}>
                             <Form.FloatingLabel label='Name'>
                                 <Form.Control className='bg-dark text-light my-2' value={device.name} onChange={async (e) =>{
                                     const newDev = {...device, name : e.target.value};
@@ -69,24 +75,31 @@ function Device(props){
                                 } }/>
                             </Form.FloatingLabel>
                         </Col>
+                        <Col xs={4}>
+                            <Form.FloatingLabel label='Brightness'>
+                                <RangeSlider 
+                                    className="my-2"
+                                    value={device.brightness}
+                                    onChange={(e)=> mutate({...device, brightness : e.target.value}, false)}
+                                    onAfterChange={async (e) => {
+                                        const newDev = {...device, brightness : e.target.value};
+                                        await updateDeviceById(newDev);
+                                        mutate(newDev);
+                                    }
+                                    } min={1} max={255}/>
+                            </Form.FloatingLabel>
+                        </Col>
                         <Col xs={2}>
                             <Button onClick={() => createConfig(device)}>Create Config</Button>
                         </Col>
+                        <Col>
+                        </Col>
+                        <Col xs={1}>
+                            <Button variant="danger" onClick={() => setToggle(!toggle)}>X</Button>
+                        </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId='b'>
-                        <Col xs={1}>
-                            <Form.Label>Brightness :</Form.Label>
-                        </Col>
-                        <Col xs={10}>
-                            <RangeSlider value={device.brightness}
-                                onChange={(e)=> mutate({...device, brightness : e.target.value}, false)}
-                                onAfterChange={async (e) => {
-                                    const newDev = {...device, brightness : e.target.value};
-                                    await updateDeviceById(newDev);
-                                    mutate(newDev);
-                                }
-                                } min={1} max={255}/>
-                        </Col>
+
                     </Form.Group>
                     {!stripsLoading && strips && strips?.map((strip, i) => 
                         <div key={i.toString()}>
