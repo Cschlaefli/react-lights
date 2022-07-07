@@ -21,8 +21,8 @@ function ColorRange(props){
 
 
     const resolution = 16;
-    const size = max - min;
     /*idk if this one works
+    const size = max - min;
     const hueColors = Array(resolution).fill().map((_,i) => hsv2rgb((((i)/(resolution-1))*size)+ min - (size * .5), 1, 1) );
     */
     const hueColors = Array(resolution).fill().map((_,i) => hsv2rgb((((i)/(resolution))*(max)) + min , 1, 1) );

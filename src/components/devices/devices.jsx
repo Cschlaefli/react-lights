@@ -1,16 +1,15 @@
-import Details from './details'
+import Device from './device'
 import { useDevices } from '../../lib/useDevices';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Stack from 'react-bootstrap/Stack';
 function Devices(props){
-    const [devices, {loading}] = useDevices();
-    useEffect(() =>{},[devices]);
+    const [devices, {loading}] = useDevices(props?.query);
 
     if(!loading){
       return (
-        <Stack gap={2} className="col-md-5 mx-auto"> 
+        <Stack gap={2} className="col-md-12 my-3 mx-auto"> 
         {devices?.map(dev => (
-          <Details key={dev.address} address={dev.address} name={dev.name} strips={dev.device_strips}/>
+          <Device key={dev.address} address={dev.address} name={dev.name} strips={dev.device_strips}/>
         ))}
       </Stack>
       )

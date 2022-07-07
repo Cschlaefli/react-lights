@@ -50,13 +50,22 @@ export async function updateStripById(strip){
     };
     return await (await fetch(`${baseUrl}/strips`, requestOptions)).json();
 }
-export async function updateOrCreateConfigStripById(configStrip){
+export async function addConfigStrip(configStrip){
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(configStrip)
     };
     return await (await fetch(`${baseUrl}/config_strips`, requestOptions)).json();
+}
+
+export async function deleteConfigStrip(configStrip){
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(configStrip)
+    };
+    return (await fetch(`${baseUrl}/config_strips`, requestOptions));
 }
 
 export async function updateOrCreateConfigById(config){
@@ -69,7 +78,7 @@ export async function updateOrCreateConfigById(config){
 }
 
 const Cycle = 0;
-const Cycle_NoBounce = 1;
+//const Cycle_NoBounce = 1;
 const Rainbow = 2;
 
 export function deserializeStrip(strip){
@@ -147,7 +156,7 @@ export function serializeStrip(strip){
     return ret;
 
 }
-
+/*
 function serializeStrips(stripDef){
     let currBuffer = 1;
     let bufferList = {"1520" : Buffer.from([Number(stripDef.brightness)])};
@@ -211,3 +220,4 @@ function serializeStrips(stripDef){
     }
     return bufferList;
 }
+*/

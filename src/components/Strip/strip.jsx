@@ -1,21 +1,34 @@
-import {Form, FloatingLabel, Range, Col, Row } from 'react-bootstrap';
+import {Form, Col, Row } from 'react-bootstrap';
+import {Button } from 'react-bootstrap';
 import { serializeStrip, updateStripById } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
 import { useStrip } from '../../lib/useStrip';
 import RangeSlider from 'react-bootstrap-range-slider';
-import ColorRange from './colorRange';
+import ColorRange from '../ColorRange/colorRange';
 
 function Strip(props){
     const [strip, {loading, mutate}] = useStrip({id : props.strip.id});
-
+    const [toggle, setToggle] = useState(JSON.parse(window.localStorage.getItem(`strip-${props.uuid}-toggle`)));
     const labelSize = 3;
     const sliderSize = 9;
+
+    useEffect(() =>{
+        setToggle(JSON.parse(window.localStorage.getItem(`strip-${props.uuid}-toggle`)));
+    }, []);
+    useEffect(() => {
+        window.localStorage.setItem(`strip-${props.uuid}-toggle`, toggle);
+    }, [toggle]);
+
+
+
+
+    if(toggle){
 
     return (
         !loading &&
         <div className='border p-4 m-1' key={props.indx}>
-            <Form.Group as={Row} controlId={props.indx + "bleh"}>
-                <Col xs={11}>
+            <Form.Group as={Row} controlId={props.indx + "actions"}>
+                <Col xs={4}>
                     <Form.FloatingLabel label='Name'>
                         <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
                         onChange={async e => {
@@ -25,11 +38,7 @@ function Strip(props){
                         }}/>
                     </Form.FloatingLabel>
                 </Col>
-                <Col xs={1}>
-                    {props.children}
-                </Col>
-            </Form.Group>
-            <Form.Group controlId={props.indx + "stripType"}>
+                <Col xs={4}>
                 <Form.FloatingLabel label='Strip Type'>
                     <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
                         const newStrip = {...strip, stripType : e.target.value};
@@ -41,6 +50,11 @@ function Strip(props){
                         <option value="Cycle">Cycle</option>
                     </Form.Select>
                 </Form.FloatingLabel>
+                </Col>
+                <Col xs={4}>
+                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
+                    {props.children}
+                </Col>
             </Form.Group>
             <Form.Group as={Row} controlId={props.indx + "stripLength"}>
                 <Col xs={3}>
@@ -48,17 +62,17 @@ function Strip(props){
                 </Col>
                 <Col xs={7}>
                     <RangeSlider name="Length" value={strip.length} 
-                    onChange={(e)=> {
-                        const newStrip =  serializeStrip({...strip, length : e.target.value});
-                        mutate(newStrip, false);
-                    }
-                    }
-                    onAfterChange={async (e) => {
-                        const newStrip = {...strip, length : e.target.value};
-                        const retStrip = await updateStripById(newStrip);
-                        mutate(retStrip);
+                        onChange={(e)=> {
+                            const newStrip =  serializeStrip({...strip, length : e.target.value});
+                            mutate(newStrip, false);
                         }
-                        } min={1} max={255}/>
+                        }
+                        onAfterChange={async (e) => {
+                            const newStrip = {...strip, length : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                            }
+                            } min={1} max={255}/>
                 </Col>
                 <Col xs={2}>
                     <Form.Control className='bg-dark text-light m-1' name="Length" value={strip.length} onChange={async (e) => {
@@ -161,11 +175,72 @@ function Strip(props){
                             }} min={0} max={15}/>
                         </Col>
                     </Form.Group>
-                    <ColorRange max={strip.upper*24} min={strip.lower*24}></ColorRange>
+                    <Col xs={12}>
+                        <ColorRange max={strip.upper*24} min={strip.lower*24}></ColorRange>
+                    </Col>
                 </div>
             }
         </div>
                 )
+        }else{
+            return (
+                <div className='border p-4 m-1'>
+                    <Form.Group as={Row} controlId={props.indx + "actions"}>
+                        <Col md={3} xs={6}>
+                            {!loading &&
+                                <Form.FloatingLabel label='Name'>
+                                    <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
+                                    onChange={async e => {
+                                        const newStrip = {...strip, name : e.target.value};
+                                        const retStrip = await updateStripById(newStrip);
+                                        mutate(retStrip);
+                                    }}/>
+                                </Form.FloatingLabel>
+                            }
+                            {loading &&
+                                <Form.FloatingLabel label='Name'>
+                                    <Form.Control disabled className='bg-dark text-light my-2' name="Name" value={props.name} />
+                                </Form.FloatingLabel>
+                            }
+                        </Col>
+                        <Col md={3} xs={6}>
+                            {!loading &&
+                                <Form.FloatingLabel label='Strip Type'>
+                                    <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
+                                        const newStrip = {...strip, stripType : e.target.value};
+                                        const retStrip = await updateStripById(newStrip);
+                                        mutate(retStrip);
+                                    } }>
+                                        <option value="Solid">Solid</option>
+                                        <option value="Rainbow">Rainbow</option>
+                                        <option value="Cycle">Cycle</option>
+                                    </Form.Select>
+                                </Form.FloatingLabel>
+                            }
+                            {loading &&
+                                <Form.FloatingLabel label='Strip Type'>
+                                    <Form.Select disabled className='bg-dark text-light my-2' name="StripType" value={props.stripType}>
+                                        <option value="Solid">Solid</option>
+                                        <option value="Rainbow">Rainbow</option>
+                                        <option value="Cycle">Cycle</option>
+                                    </Form.Select>
+                                </Form.FloatingLabel>
+                            }
+                        </Col>
+                        <Col md={2} xs={6}>
+                            <Button className="m-3" onClick={_=> setToggle(!toggle)}> Show details </Button>
+                        </Col>
+                        <Col md={2}xs={6}>
+                            <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Duplicate</Button>
+                        </Col>
+                        <Col md={1}xs={6}>
+                            <Button className='m-3' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
+                        </Col>
+                    {props.children}
+                    </Form.Group>
+                </div>
+            )
+        }
 
 } 
 export default Strip;

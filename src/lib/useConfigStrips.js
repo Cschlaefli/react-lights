@@ -1,8 +1,8 @@
 import { useSwr } from "./useSwr";
 
-export function useDevice(params) {
+export function useConfigStrips(params) {
 	const query = new URLSearchParams(params).toString();
-	const { data, mutate } = useSwr(`/config_strips/${params.address}`);
+	const { data, mutate } = useSwr(`/config_strips/?${query}`);
 	// if data is not defined, the query has not completed
 	const loading = !data;
 	const config_strips = data;
