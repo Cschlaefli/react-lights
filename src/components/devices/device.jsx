@@ -1,8 +1,8 @@
 import { Stack, CloseButton, Button,  Form, Col, Row } from 'react-bootstrap';
 import { deleteDeviceStrip, addDeviceStrip, updateDeviceById, updateStripById, updateOrCreateConfigById, addConfigStrip } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
-//import RangeSlider from 'react-bootstrap-range-slider';
-import RangeSlider from '../rangeSlider/index';
+import RangeSlider from 'react-bootstrap-range-slider';
+//import RangeSlider from '../rangeSlider/index';
 import Strip from '../Strip/strip';
 import { useDevice } from '../../lib/useDevice';
 import { useDeviceStrips } from '../../lib/useDeviceStrips';
