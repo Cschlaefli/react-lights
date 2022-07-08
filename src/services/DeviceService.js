@@ -82,13 +82,15 @@ const Cycle = 0;
 const Rainbow = 2;
 
 export function deserializeStrip(strip){
+    console.log("bytes",strip.bytes);
     let l = strip.bytes & 255;
-    let r = (strip.bytes >> 8)  & 255;
-    let g = (strip.bytes >> 16) & 255;
-    let b = (strip.bytes >> 24) & 255;
-    let lower = b & 15;
-    let upper = (b & 240) >> 4;
-    let speed = (r  & 248) >> 3;
+    let r = (strip.bytes >>> 8)  & 255;
+    let g = (strip.bytes >>> 16) & 255;
+    let b = (strip.bytes >>> 24) & 255;
+    let lower = (strip.bytes >>> 24) & 15;
+    let upper = (strip.bytes >>> 28) & 15;
+    let speed = (r  & 248) >>> 3;
+    console.log("b", b);
 
     let ret = {...strip, color:Color(1.0), length:l, upper:upper, lower:lower, otherParam:g, cycleShift:g&15, rainbowStretch:g&15,  speed:speed};
 
@@ -129,7 +131,7 @@ export function serializeStrip(strip){
 
         bytes += (strip.r << 8);
         bytes += (strip.g << 16);
-        bytes += (strip.b << 24);
+        bytes += ((strip.b << 24) >>> 0);
     }else{
         if(len % 2 === 0 ){len -= 1}
         switch(strip.stripType){
@@ -148,7 +150,7 @@ export function serializeStrip(strip){
         bytes += Number(strip.speed) << 11;
         bytes += Number(otherParam)  << 16;
         bytes += Number(strip.lower) << 24;
-        bytes += Number(strip.upper) << 28;
+        bytes += (Number(strip.upper) << 28) >>> 0;
     }
     bytes += (len & 255);
 
