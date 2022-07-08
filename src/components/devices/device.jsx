@@ -66,6 +66,9 @@ function Device(props){
             <div>
                 <Form className='bg-dark text-light p-3' onSubmit={handleSubmit}>
                     <Form.Group as={Row} controlId='n'>
+                        <Col xs={1}>
+                            <Button className='m-3' onClick={() => setToggle(!toggle)}>-</Button>
+                        </Col>
                         <Col xs={4}>
                             <Form.FloatingLabel label='Name'>
                                 <Form.Control className='bg-dark text-light my-2' value={device.name} onChange={async (e) =>{
@@ -90,12 +93,9 @@ function Device(props){
                             </Form.FloatingLabel>
                         </Col>
                         <Col xs={2}>
-                            <Button onClick={() => createConfig(device)}>Create Config</Button>
+                            <Button className="m-3" onClick={() => createConfig(device)}>Create Config</Button>
                         </Col>
                         <Col>
-                        </Col>
-                        <Col xs={1}>
-                            <Button variant="danger" onClick={() => setToggle(!toggle)}>X</Button>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId='b'>

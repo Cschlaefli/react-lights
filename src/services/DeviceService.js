@@ -93,10 +93,10 @@ export function deserializeStrip(strip){
     let ret = {...strip, color:Color(1.0), length:l, upper:upper, lower:lower, otherParam:g, cycleShift:g&15, rainbowStretch:g&15,  speed:speed};
 
 
+    ret.color = Color.rgb(r,g,b).hex();
 
     if(l % 2 === 0){
         ret.stripType = "Solid";
-        ret.color = Color.rgb(r,g,b).hex();
     }else{
         let stype = r & 7;
         switch(stype){
@@ -151,6 +151,8 @@ export function serializeStrip(strip){
         bytes += Number(strip.upper) << 28;
     }
     bytes += (len & 255);
+
+    console.log(bytes);
 
     let ret = {name :strip.name, bytes : bytes, id : strip.id};
     return ret;
