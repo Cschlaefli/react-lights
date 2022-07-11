@@ -38,9 +38,9 @@ function Devices(props){
             updateById={updateDeviceById}
             uuid={`${dev.address}`}
             mutate={mutate}>
-              <Col></Col>
+              <Col xs={2}></Col>
               { dev.use_config && !configLoading &&
-                <Dropdown className="col-2 row m-2">
+                <Dropdown as={Col} xs={9} md={2} className="row m-2 p-1">
                   <Dropdown.Toggle className="col btn-info">
                     { dev.config_id  ? configs?.find(e => e.id === dev.config_id)?.name ?? "Select Config" : "Select Config"}
                   </Dropdown.Toggle>
@@ -59,10 +59,11 @@ function Devices(props){
                 </Dropdown>
               }
               {!dev.use_config &&
-                <Button className="col-2 m-2" onClick={() => createConfig(dev)}>Create Config from Strips</Button>
+                <Button as={Col} md={2} xs={9} className="m-2" onClick={() => createConfig(dev)}>Create Config from Strips</Button>
               }
+              <Col xs={2} md={1}></Col>
               <ToggleButton
-                className='col-1 m-2'
+                className='m-2 col-md-1 col-9'
                 type="checkbox"
                 variant="outline-info"
                 checked={dev.use_config}

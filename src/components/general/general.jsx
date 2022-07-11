@@ -41,22 +41,22 @@ function General(props){
     if(!loading){
         return (<Stack gap={1} className='bg-dark p-3'>
             {!toggle &&
-            <Row className="p-3">
-                <Col md={1} xs={6}>
+            <Row className="">
+                <Col md={1} xs={2}>
                     <Button className="m-2" onClick={_=> setToggle(!toggle)}>+</Button>
                 </Col>
-                <Button className="col-4 text-left m-2" onClick={() => setToggle(!toggle)}>{general.name}</Button>
+                <Button md={4} xs={9} as={Col} className="col text-left m-2" onClick={() => setToggle(!toggle)}>{general.name}</Button>
                 {props.children} 
             </Row>
             }
             {toggle && 
             <div>
-                <Form className='bg-dark text-light p-3'>
+                <Form className='bg-dark text-light'>
                     <Form.Group as={Row} controlId='n'>
-                        <Col md={1} xs={6}>
+                        <Col md={1} xs={2}>
                             <Button className="m-2" onClick={_=> setToggle(!toggle)}>-</Button>
                         </Col>
-                        <Col xs={4}>
+                        <Col md={4} xs={10}>
                             <Form.FloatingLabel label='Name'>
                                 <Form.Control className='bg-dark text-light my-2' value={general.name}
                                 onChange={async (e) =>{
@@ -66,7 +66,8 @@ function General(props){
                                 } }/>
                             </Form.FloatingLabel>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={2} md={2}></Col>
+                        <Col xs={10} md={4}>
                             <Form.FloatingLabel label='Brightness'>
                                 <RangeSlider 
                                     className="my-2"
@@ -98,7 +99,9 @@ function General(props){
                                 </Strip>
                             </div>
                         )}
-                    <Button className='m-3' onClick={e => addStrip()}>New Strip</Button>
+                    <Col></Col>
+                    <Button as={Col} xs={4} md={6} className='m-3' onClick={e => addStrip()}>New Strip</Button>
+                    <Col></Col>
                     </Form.Group>
                 </Form>
             </div>

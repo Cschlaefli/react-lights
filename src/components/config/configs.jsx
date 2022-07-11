@@ -36,22 +36,17 @@ function Configs(props){
             updateById={updateOrCreateConfigById}
             uuid={`${dev.id}`}
             mutate={mutate}>
-              <Col>
-              </Col>
+              <Col xs={2} md={4}></Col>
 
-              <Button className="col-1 m-2" variant="danger" onClick={() => deleteConfig(dev)}>
+              <Button xs={8} md={2} as={Col} className="m-2" variant="danger" onClick={() => deleteConfig(dev)}>
                 Delete Config
-                </Button>
+              </Button>
             </General>
           </div>
         ))}
-        <Col></Col>
-        <Col xs={4}>
-          <Button className='col-4 m-2 align-center center-align' onClick={() => createConfig()}>
-            New Config
-          </Button>
-        </Col>
-        <Col></Col>
+        <Button xs={6} md={4} as={Col} className='col-4 m-2 align-center center-align' onClick={() => createConfig()}>
+          New Config
+        </Button>
       </Stack>
       )
     }else{

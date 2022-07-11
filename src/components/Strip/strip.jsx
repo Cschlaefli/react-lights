@@ -9,8 +9,8 @@ import ColorRange from '../ColorRange/colorRange';
 function Strip(props){
     const [strip, {loading, mutate}] = useStrip({id : props.strip.id});
     const [toggle, setToggle] = useState(JSON.parse(window.localStorage.getItem(`strip-${props.uuid}-toggle`)));
-    const labelSize = 3;
-    const sliderSize = 9;
+    const labelSize = {xs : 10, md : 2}
+    const sliderSize = {xs : 10, md : 4}
 
     useEffect(() =>{
         setToggle(JSON.parse(window.localStorage.getItem(`strip-${props.uuid}-toggle`)));
@@ -28,10 +28,10 @@ function Strip(props){
         !loading &&
         <div className='border p-4 m-1' key={props.indx}>
             <Form.Group as={Row} controlId={props.indx + "actions"}>
-                <Col md={1} xs={6}>
-                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
-                </Col>
-                <Col md={2} xs={6}>
+                <Button md={1} xs={3} as={Col} className='m-2 mb-4' onClick={_=> setToggle(!toggle)}>-</Button>
+                <Button md={1} xs={3} as={Col} className='m-2 mb-4' onClick={e => props.addStrip(strip.id)}>Copy</Button>
+                <Button md={1} xs={3} as={Col} className='m-2 mb-4' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
+                <Col md={2} xs={10}>
                     <Form.FloatingLabel label='Name'>
                         <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
                         onChange={async e => {
@@ -41,7 +41,7 @@ function Strip(props){
                         }}/>
                     </Form.FloatingLabel>
                 </Col>
-                <Col md={2} xs={6}>
+                <Col md={2} xs={10}>
                 <Form.FloatingLabel label='Strip Type'>
                     <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
                         const newStrip = {...strip, stripType : e.target.value};
@@ -54,7 +54,7 @@ function Strip(props){
                     </Form.Select>
                 </Form.FloatingLabel>
                 </Col>
-                <Col md={4} xs={6}>
+                <Col md={4} xs={10}>
                     <Form.Label>Length :</Form.Label>
                     <RangeSlider name="Length" value={strip.length} 
                         onChange={(e)=> {
@@ -69,16 +69,6 @@ function Strip(props){
                             }
                             } min={1} max={255}/>
                 </Col>
-                <Col md={1}xs={6}>
-                    <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Dupe</Button>
-                </Col>
-                <Col></Col>
-                <Col md={1}xs={6}>
-                    <Button className='m-3' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
-                </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId={props.indx + "stripLength"}>
-
             </Form.Group>
             {strip.stripType === "Solid" && 
             <Form.Group controlId={props.indx + "stripColor"}>
@@ -97,87 +87,81 @@ function Strip(props){
             </Form.Group>}
 
             {(strip.stripType === "Cycle" || strip.stripType === "Rainbow" ) &&
-                <div>
-                    <Form.Group as={Row} controlId={props.indx + "stripSpeed"}>
-                        <Col xs={labelSize}>
-                            <Form.Label>Speed :</Form.Label>
-                        </Col>
-                        <Col xs={sliderSize}>
-                            <RangeSlider name="Speed" value={strip.speed} 
-                            onChange={(e)=> mutate(serializeStrip({...strip, speed : e.target.value}), false)}
-                            onAfterChange={async (e) => {
-                                const newStrip = {...strip, speed : e.target.value};
-                                const retStrip = await updateStripById(newStrip);
-                                mutate(retStrip);
-                            }
-                            } min={0} max={31}/>
-                        </Col>
-                    </Form.Group>
+                <Row>
+                    <Col xs={labelSize.xs} md={labelSize.md}>
+                        <Form.Label>Speed :</Form.Label>
+                    </Col>
+                    <Col xs={sliderSize.xs} md={sliderSize.md}>
+                        <RangeSlider name="Speed" value={strip.speed} 
+                        onChange={(e)=> mutate(serializeStrip({...strip, speed : e.target.value}), false)}
+                        onAfterChange={async (e) => {
+                            const newStrip = {...strip, speed : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                        }
+                        } min={0} max={31}/>
+                    </Col>
             {strip.stripType === "Cycle" && 
-                    <Form.Group as={Row} controlId={props.indx + "stripCy"}>
-                        <Col xs={labelSize}>
-                            <Form.Label>Cycle Shift :</Form.Label>
-                        </Col>
-                        <Col xs={sliderSize}>
-                            <RangeSlider name="CycleShift" value={strip.cycleShift} 
-                            onChange={(e)=> mutate(serializeStrip({...strip, cycleShift : e.target.value}), false)}
-                            onAfterChange={async(e) => {
-                                const newStrip = {...strip, cycleShift : e.target.value};
-                                const retStrip = await updateStripById(newStrip);
-                                mutate(retStrip);
-                            }} min={0} max={15}/>
-                        </Col>
-                    </Form.Group>
+                    <Col xs={labelSize.xs} md={labelSize.md}>
+                        <Form.Label>Shift :</Form.Label>
+                    </Col>
+            }
+            {strip.stripType === "Cycle" && 
+                    <Col xs={sliderSize.xs} md={sliderSize.md}>
+                        <RangeSlider name="CycleShift" value={strip.cycleShift} 
+                        onChange={(e)=> mutate(serializeStrip({...strip, cycleShift : e.target.value}), false)}
+                        onAfterChange={async(e) => {
+                            const newStrip = {...strip, cycleShift : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                        }} min={0} max={15}/>
+                    </Col>
             }
 
             {strip.stripType === "Rainbow" && 
-                    <Form.Group as={Row} controlId={props.indx + "stripCof"}>
-                        <Col xs={labelSize}>
-                            <Form.Label>Rainbow Strech :</Form.Label>
-                        </Col>
-                        <Col xs={sliderSize}>
-                            <RangeSlider name="RainbowStretch" value={strip.rainbowStretch} 
-                            onChange={(e)=> mutate(serializeStrip({...strip, rainbowStretch : e.target.value}), false)}
-                            onAfterChange={async(e) => {
-                                const newStrip = {...strip, rainbowStretch : e.target.value};
-                                const retStrip = await updateStripById(newStrip);
-                                mutate(retStrip);
-                            }} min={0} max={15}/>
-                        </Col>
-                    </Form.Group>
+                    <Col xs={labelSize.xs} md={labelSize.md}>
+                        <Form.Label>Strech :</Form.Label>
+                    </Col>
             }
-                    <Form.Group as={Row} controlId={props.indx + "stripUpper"}>
-                        <Col xs={labelSize}>
-                            <Form.Label>Magnitude :</Form.Label>
-                        </Col>
-                        <Col xs={sliderSize}>
-                            <RangeSlider name="Upper" value={strip.upper} 
-                            onChange={(e)=> mutate(serializeStrip({...strip, upper : e.target.value}), false)}
-                            onAfterChange={async(e)=>{
-                                const newStrip = {...strip, upper : e.target.value};
-                                const retStrip = await updateStripById(newStrip);
-                                mutate(retStrip);
-                            }} min={0} max={15}/>
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row} controlId={props.indx + "stripLower"}>
-                        <Col xs={labelSize}>
-                            <Form.Label>Offset :</Form.Label>
-                        </Col>
-                        <Col xs={sliderSize}>
-                            <RangeSlider name="Lower" value={strip.lower} 
-                            onChange={(e)=> mutate(serializeStrip({...strip, lower : e.target.value}), false)}
-                            onAfterChange={async(e)=>{
-                                const newStrip = {...strip, lower : e.target.value};
-                                const retStrip = await updateStripById(newStrip);
-                                mutate(retStrip);
-                            }} min={0} max={15}/>
-                        </Col>
-                    </Form.Group>
+            {strip.stripType === "Rainbow" && 
+                    <Col xs={sliderSize.xs} md={sliderSize.md}>
+                        <RangeSlider name="RainbowStretch" value={strip.rainbowStretch} 
+                        onChange={(e)=> mutate(serializeStrip({...strip, rainbowStretch : e.target.value}), false)}
+                        onAfterChange={async(e) => {
+                            const newStrip = {...strip, rainbowStretch : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                        }} min={0} max={15}/>
+                    </Col>
+            }
+                    <Col xs={labelSize.xs} md={labelSize.md}>
+                        <Form.Label>Magnitude :</Form.Label>
+                    </Col>
+                    <Col xs={sliderSize.xs} md={sliderSize.md}>
+                        <RangeSlider name="Upper" value={strip.upper} 
+                        onChange={(e)=> mutate(serializeStrip({...strip, upper : e.target.value}), false)}
+                        onAfterChange={async(e)=>{
+                            const newStrip = {...strip, upper : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                        }} min={0} max={15}/>
+                    </Col>
+                    <Col xs={labelSize.xs} md={labelSize.md}>
+                        <Form.Label>Offset :</Form.Label>
+                    </Col>
+                    <Col xs={sliderSize.xs} md={sliderSize.md}>
+                        <RangeSlider name="Lower" value={strip.lower} 
+                        onChange={(e)=> mutate(serializeStrip({...strip, lower : e.target.value}), false)}
+                        onAfterChange={async(e)=>{
+                            const newStrip = {...strip, lower : e.target.value};
+                            const retStrip = await updateStripById(newStrip);
+                            mutate(retStrip);
+                        }} min={0} max={15}/>
+                    </Col>
                     <Col xs={12}>
                         <ColorRange max={strip.upper*24} min={strip.lower*24}></ColorRange>
                     </Col>
-                </div>
+                </Row>
             }
         </div>
                 )
@@ -185,10 +169,10 @@ function Strip(props){
             return (
                 <div className='border p-4 m-1'>
                     <Form.Group as={Row} controlId={props.indx + "actions"}>
-                        <Col md={1} xs={6}>
-                            <Button className="m-3" onClick={_=> setToggle(!toggle)}>+</Button>
-                        </Col>
-                        <Col md={2} xs={6}>
+                        <Button md={1} xs={3} as={Col} className='m-2 mb-4' onClick={_=> setToggle(!toggle)}>+</Button>
+                        <Button md={1} xs={3} as={Col} className='m-2 mb-4' onClick={e => props.addStrip(strip.id)}>Copy</Button>
+                        <Button md={1} xs={3} as={Col} className='m-2 mb-4' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
+                        <Col md={2} xs={10}>
                             {!loading &&
                                 <Form.FloatingLabel label='Name'>
                                     <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
@@ -205,7 +189,7 @@ function Strip(props){
                                 </Form.FloatingLabel>
                             }
                         </Col>
-                        <Col md={2} xs={6}>
+                        <Col md={2} xs={10}>
                             {!loading &&
                                 <Form.FloatingLabel label='Strip Type'>
                                     <Form.Select className='bg-dark text-light my-2' name="StripType" value={strip.stripType} onChange={async(e) =>{
@@ -229,7 +213,7 @@ function Strip(props){
                                 </Form.FloatingLabel>
                             }
                         </Col>
-                        <Col md={4} xs={6}>
+                        <Col md={4} xs={10}>
                             <Form.Label>Length :</Form.Label>
                             {!loading &&
                             <RangeSlider name="Length" value={strip.length} 
@@ -245,13 +229,6 @@ function Strip(props){
                                     }
                                     } min={1} max={255}/>
                                 }
-                        </Col>
-                        <Col md={1}xs={6}>
-                            <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Dupe</Button>
-                        </Col>
-                        <Col></Col>
-                        <Col md={1}xs={6}>
-                            <Button className='m-3' variant='danger' onClick={e => props.deleteStrip(props._strip)}>X</Button>
                         </Col>
                     </Form.Group>
                 </div>
