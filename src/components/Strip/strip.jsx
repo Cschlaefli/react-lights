@@ -28,6 +28,9 @@ function Strip(props){
         !loading &&
         <div className='border p-4 m-1' key={props.indx}>
             <Form.Group as={Row} controlId={props.indx + "actions"}>
+                <Col md={1} xs={6}>
+                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
+                </Col>
                 <Col md={2} xs={6}>
                     <Form.FloatingLabel label='Name'>
                         <Form.Control className='bg-dark text-light my-2' name="Name" value={strip.name} 
@@ -68,9 +71,6 @@ function Strip(props){
                 </Col>
                 <Col md={1}xs={6}>
                     <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Dupe</Button>
-                </Col>
-                <Col md={1} xs={6}>
-                    <Button className='m-3' onClick={_=> setToggle(!toggle)}>-</Button>
                 </Col>
                 <Col></Col>
                 <Col md={1}xs={6}>
@@ -185,6 +185,9 @@ function Strip(props){
             return (
                 <div className='border p-4 m-1'>
                     <Form.Group as={Row} controlId={props.indx + "actions"}>
+                        <Col md={1} xs={6}>
+                            <Button className="m-3" onClick={_=> setToggle(!toggle)}>+</Button>
+                        </Col>
                         <Col md={2} xs={6}>
                             {!loading &&
                                 <Form.FloatingLabel label='Name'>
@@ -245,9 +248,6 @@ function Strip(props){
                         </Col>
                         <Col md={1}xs={6}>
                             <Button className='m-3' onClick={e => props.addStrip(strip.id)}>Dupe</Button>
-                        </Col>
-                        <Col md={1} xs={6}>
-                            <Button className="m-3" onClick={_=> setToggle(!toggle)}>+</Button>
                         </Col>
                         <Col></Col>
                         <Col md={1}xs={6}>

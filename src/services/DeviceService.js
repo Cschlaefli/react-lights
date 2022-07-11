@@ -68,6 +68,14 @@ export async function deleteConfigStrip(configStrip){
     return (await fetch(`${baseUrl}/config_strips`, requestOptions));
 }
 
+export async function deleteConfigById(config){
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+    };
+    return await (await fetch(`${baseUrl}/config`, requestOptions)).json();
+}
 export async function updateOrCreateConfigById(config){
     const requestOptions = {
         method: 'POST',
@@ -82,7 +90,7 @@ const Cycle = 0;
 const Rainbow = 2;
 
 export function deserializeStrip(strip){
-    console.log("bytes",strip.bytes);
+    //console.log("bytes",strip.bytes);
     let l = strip.bytes & 255;
     let r = (strip.bytes >>> 8)  & 255;
     let g = (strip.bytes >>> 16) & 255;
@@ -153,7 +161,7 @@ export function serializeStrip(strip){
     }
     bytes += (len & 255);
 
-    console.log(bytes);
+    //console.log(bytes);
 
     let ret = {name :strip.name, bytes : bytes, id : strip.id};
     return ret;

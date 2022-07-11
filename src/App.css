@@ -5,6 +5,11 @@
   background-color: #282c34;
 }
 
+.floating-minimize{
+  margin-right:100%;
+  z-index: 1;
+}
+
 .form-label{
   text-align: left;
   width: 100%;
