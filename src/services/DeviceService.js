@@ -16,6 +16,7 @@ export async function getDeviceById(id){
 }
 
 export async function updateDeviceById(device){
+    console.log(device);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

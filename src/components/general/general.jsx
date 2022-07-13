@@ -10,8 +10,9 @@ function General(props){
     const addGeneralStrip = props.addStrip;
     const updateById = props.updateById;
     const useStrips = props.useStrips;
+    const useGeneral = props.useGeneral;
     const [strips, {loading : stripsLoading, mutate : stripsMutate}] = useStrips(props.strip_id);
-    const [general, {loading, mutate}] = props.useGeneral(props.id);
+    const [general, {loading, mutate}] = useGeneral(props.id);
     const [toggle, setToggle] = useState(JSON.parse(window.localStorage.getItem(`${props.uuid}-toggle`)));
 
     async function addStrip(id){
@@ -75,6 +76,8 @@ function General(props){
                                     onChange={(e)=> mutate({...general, brightness : e.target.value}, false)}
                                     onAfterChange={async (e) => {
                                         const newDev = {...general, brightness : e.target.value};
+                                        console.log(general);
+                                        console.log(newDev);
                                         await updateById(newDev);
                                         mutate(newDev);
                                     }

@@ -29,7 +29,7 @@ function Devices(props){
         <Stack gap={2} className="col-md-12 my-3 mx-auto"> 
         {devices?.map(dev => (
           <div key={dev.id}>
-            <General key={dev.id} id={{address : dev.address}} strip_id={dev.use_config ? {config_id : dev.config_id} : {address : dev.address}} 
+            <General key={dev.id} id={{address : dev.address}} strip_id={dev.use_config ? {config_id : dev.config_id} : {device_address : dev.address}} 
                   name={dev.name}
             addStrip={dev.use_config ? addConfigStrip :addDeviceStrip}
             deleteStrip={dev.use_config ? deleteConfigStrip : deleteDeviceStrip }
@@ -48,7 +48,7 @@ function Devices(props){
                     {configs?.map( (config,i) => (
                       <Dropdown.Item eventkey={i}
                           onClick={ async (e) =>{
-                            const newDev = {...dev, config_id  : config.id};
+                            const newDev = {...dev, config_id  : config.id, brightness : config.brightness};
                             await updateDeviceById(newDev);
                             mutate();
                         }}>
@@ -69,6 +69,7 @@ function Devices(props){
                 checked={dev.use_config}
                 onClick={ async (e) =>{
                   const newDev = {...dev, use_config  : !dev.use_config, config_id : null};
+                  console.log(newDev);
                   await updateDeviceById(newDev);
                   mutate();
                 }}>
