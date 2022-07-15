@@ -85,6 +85,22 @@ export async function updateOrCreateConfigById(config){
     };
     return await (await fetch(`${baseUrl}/config`, requestOptions)).json();
 }
+export async function updateOrCreateSchedule(sched){
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sched)
+    };
+    return await (await fetch(`${baseUrl}/schedule`, requestOptions)).json();
+}
+export async function deleteSchedule(sched){
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sched)
+    };
+    return await (await fetch(`${baseUrl}/schedule`, requestOptions)).json();
+}
 
 const Cycle = 0;
 //const Cycle_NoBounce = 1;

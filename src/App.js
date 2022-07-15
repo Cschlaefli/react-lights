@@ -1,6 +1,7 @@
 import './App.css';
 import Devices from './components/devices/devices';
 import Configs from './components/config/configs';
+import Schedules from './components/schedule/schedules';
 import { Nav, Navbar, NavbarBrand, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -25,9 +26,16 @@ function App() {
                   </LinkContainer>
                 </Nav.Item>
                 <Nav.Item>
-                  <LinkContainer to="config">
+                  <LinkContainer to="configs">
                     <Nav.Link>
                       Configs
+                    </Nav.Link>
+                  </LinkContainer>
+                </Nav.Item>
+                <Nav.Item>
+                  <LinkContainer to="schedules">
+                    <Nav.Link>
+                      Scheudles
                     </Nav.Link>
                   </LinkContainer>
                 </Nav.Item>
@@ -40,7 +48,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Devices/>} />
             <Route path="/devices" element={<Devices/>} />
-            <Route path="/config" element={<Configs/>} />
+            <Route path="/configs" element={<Configs/>} />
+            <Route path="/schedules" element={<Schedules/>} />
           </Routes>
       </div>
     </div>
