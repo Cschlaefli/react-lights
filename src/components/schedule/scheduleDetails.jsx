@@ -1,4 +1,4 @@
-import { Stack, Button,  Form, Col, Row, Dropdown } from 'react-bootstrap';
+import { Stack, Button,  Form, Col, Row, Dropdown, Spinner } from 'react-bootstrap';
 import {  updateOrCreateSchedule, deleteSchedule } from '../../services/DeviceService';
 import React, { useState, useEffect } from 'react';
 import { useSchedules } from '../../lib/useSchedules';
@@ -16,19 +16,40 @@ function ScheduleDetails(props){
 
     async function addSchedule(){
     }
-    
+    if(!loading){
+
     return (
         <Form as={Row}>
             <Form.Group as={Row} controlId='n'>
             <Col xs={9} md={2}>
                 {!loading &&
                 <Form.FloatingLabel className="text-light" label='Name'>
-                    <Form.Control className='bg-dark text-light my-2' value={schedules.name} onChange={(e) => { 
-                        setName(e.target.value)
+                    <Form.Control className='bg-dark text-light my-2' value={schedules.name} onChange={
+                      async (e) => { 
+                          const newSch = {...schedules, name : e.target.value};
+                          await updateOrCreateSchedule(newSch);
+                          mutate(newSch);
                         }} />
                 </Form.FloatingLabel>
                 }
             </Col>
+            <Form.FloatingLabel type="number" className="text-light" label='Hour'>
+                <Form.Control className='bg-dark text-light my-2' value={schedules.start_hour} onChange={
+                  async (e) => { 
+                      const newSch = {...schedules, start_hour : e.target.value};
+                      await updateOrCreateSchedule(newSch);
+                      mutate(newSch);
+                    }} />
+            </Form.FloatingLabel>
+            <Form.FloatingLabel className="text-light" label='Min'>
+                <Form.Control type="number" className='bg-dark text-light my-2' value={schedules.start_minute} onChange={
+                  async (e) => { 
+                      const newSch = {...schedules, start_hour : e.target.value};
+                      await updateOrCreateSchedule(newSch);
+                      mutate(newSch);
+                    }} />
+            </Form.FloatingLabel>
+            
             {!configsLoading &&
                 <Dropdown as={Col} xs={9} md={2} className="row m-2 p-1">
                   <Dropdown.Toggle className="col btn-info">
@@ -38,9 +59,10 @@ function ScheduleDetails(props){
                     {configs?.map( (conf,i) => (
                       <Dropdown.Item eventkey={i}
                           onClick={ async (e) =>{
-                            setConfig(conf);
+                            const newSch = {...schedules, config_id : conf.id};
+                            await updateOrCreateSchedule(newSch);
+                            mutate(newSch);
                         }}>
-                        {conf.name}
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>
@@ -55,7 +77,9 @@ function ScheduleDetails(props){
                     {devices?.map( (dev,i) => (
                       <Dropdown.Item eventkey={i}
                           onClick={ async (e) =>{
-                            setDevice(dev);
+                            const newSch = {...schedules, device_address : device.address};
+                            await updateOrCreateSchedule(newSch);
+                            mutate(newSch);
                         }}>
                         {dev.name}
                       </Dropdown.Item>
@@ -66,6 +90,9 @@ function ScheduleDetails(props){
               </Form.Group>
         </Form>
     );
+    }else{
+      <Spinner></Spinner>
+    }    
 }
 
 export default ScheduleDetails;
