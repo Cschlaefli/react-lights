@@ -35,7 +35,7 @@ function App() {
                 <Nav.Item>
                   <LinkContainer to="schedules">
                     <Nav.Link>
-                      Scheudles
+                      Events
                     </Nav.Link>
                   </LinkContainer>
                 </Nav.Item>

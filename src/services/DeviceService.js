@@ -86,6 +86,7 @@ export async function updateOrCreateConfigById(config){
     return await (await fetch(`${baseUrl}/config`, requestOptions)).json();
 }
 export async function updateOrCreateSchedule(sched){
+    console.log(sched);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
